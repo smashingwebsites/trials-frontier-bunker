@@ -15,8 +15,18 @@
     >
       <div class="flex items-center justify-between">
         <h1 class="mr-auto text-lg">{{ player.name }}</h1>
-        <Battles :battles="player.battles" v-if="player.battles" />
-        <Rank :rank="player.rank" v-if="player.rank" />
+        <Battles
+          v-if="player.battles"
+          :battles="player.battles"
+          :player-id="player.id"
+          @add-battle="updateBattles"
+        />
+        <Rank
+          :rank="player.rank"
+          v-if="player.rank"
+          :player-id="player.id"
+          @change-rank="updateRank"
+        />
         <Strength :strength="player.tag" v-if="player.tag" />
       </div>
     </div>
@@ -25,16 +35,51 @@
 
 <script setup>
 const client = useSupabaseClient()
-
 const searchPlayer = ref("")
 
 const { data: players } = await useAsyncData("players", async () => {
   const { data } = await client
     .from("players")
     .select("id, name, tag, rank, notes, battles, created_at")
+    .order("id", { ascending: true })
 
   return data
 })
+
+async function updateBattles(playerId, battleCount) {
+  const { data, error } = await client
+    .from("players")
+    .update({ battles: battleCount })
+    .match({ id: playerId })
+
+  // if update success:
+  if (data) {
+    //console.log(data[0].battles)
+    const playerArrIndex = players.value.findIndex(
+      (index) => index.id == playerId
+    )
+    // Change player Array
+    players.value[playerArrIndex].battles = data[0].battles
+  } else console.log(error)
+}
+
+async function updateRank(playerId, newRank) {
+  const { data, error } = await client
+    .from("players")
+    .update({ rank: newRank })
+    .match({ id: playerId })
+
+  // if update success:
+  if (data) {
+    //console.log(data[0].battles)
+    // Todo: Make composable out of this
+    const playerArrIndex = players.value.findIndex(
+      (index) => index.id == playerId
+    )
+    // Change player Array
+    players.value[playerArrIndex].rank = data[0].rank
+  } else console.log(error)
+}
 
 const searchResultList = computed(() => {
   let searchString = searchPlayer.value.toLowerCase()

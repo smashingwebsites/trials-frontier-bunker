@@ -1,7 +1,7 @@
 <template>
-  <div
-    @click="addBattle"
-    class="flex items-center px-2 py-1 mr-2 text-sm text-white bg-indigo-600 rounded"
+  <button
+    @click="$emit('addBattle', playerId, battles + 1)"
+    class="flex items-center px-2 py-1 mr-2 text-sm text-white bg-indigo-600 rounded cursor-pointer"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,14 +17,8 @@
       />
     </svg>
     {{ battles }}
-  </div>
+  </button>
 </template>
 <script setup>
-const props = defineProps(["battles"])
-
-function addBattle() {
-  console.log(props.battles)
-  props.battles++
-  console.log(props.battles)
-}
+const props = defineProps(["battles", "playerId"])
 </script>

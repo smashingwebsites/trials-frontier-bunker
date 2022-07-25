@@ -1,8 +1,8 @@
 <template>
-  <div class="flex items-center px-2 py-1 mr-2 text-sm rounded bg-amber-400">
+  <div class="relative mr-2 rounded bg-amber-400">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="w-4 h-4 mr-1"
+      class="w-4 h-4 absolute left-2 top-1.5"
       viewBox="0 0 20 20"
       fill="currentColor"
     >
@@ -12,9 +12,19 @@
         clip-rule="evenodd"
       />
     </svg>
-    {{ rank }}
+
+    <select
+      style="background-image: none"
+      class="relative py-1 pr-2 text-sm text-center bg-transparent border-none rounded outline-none pl-7"
+      v-model="rank"
+      @change="$emit('changeRank', playerId, rank)"
+    >
+      <option v-for="index in 20" :key="index" :value="index">
+        {{ index }}
+      </option>
+    </select>
   </div>
 </template>
 <script setup>
-const props = defineProps(["rank"])
+const props = defineProps(["rank", "playerId"])
 </script>
