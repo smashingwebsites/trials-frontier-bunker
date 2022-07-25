@@ -9,12 +9,12 @@
       />
     </div>
     <div
-      class="p-4 bg-gray-200 rounded-lg shadow-lg"
+      class="relative p-4 pr-8 overflow-hidden bg-gray-200 rounded-lg shadow-lg"
       v-for="player in searchResultList"
       :key="player.id"
     >
       <div class="flex items-center justify-between">
-        <h1 class="mr-auto text-lg">{{ player.name }}</h1>
+        <h1 class="mr-auto">{{ player.name }}</h1>
         <Battles
           v-if="player.battles"
           :battles="player.battles"
@@ -27,7 +27,7 @@
           :player-id="player.id"
           @change-rank="updateRank"
         />
-        <Strength :strength="player.tag" v-if="player.tag" />
+        <Strength :strength="player.tag" />
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="relative mr-2 rounded bg-amber-400">
+  <div class="relative rounded bg-amber-400">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="w-4 h-4 absolute left-2 top-1.5"
