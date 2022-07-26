@@ -1,20 +1,16 @@
 <template>
-  <div class="grid max-w-md gap-4 p-4 mx-auto mt-4">
-    <div :class="{ 'bg-gray-200 py-4 px-2 shadow-xl rounded-lg': newPlayer }">
+  <div class="grid max-w-md gap-2 p-4 mx-auto mt-4">
+    <div :class="{ 'bg-gray-200 pt-2 pb-3 px-2 shadow-xl rounded-lg': newPlayer }">
       <input v-model="searchPlayer" type="text" placeholder="Suche" class="w-full rounded-lg" />
-      <div v-if="newPlayer" class="flex items-center justify-between">
+      <div v-if="newPlayer" class="flex items-center justify-start gap-4 pt-3">
         <Battles :battles="newPlayerBattles" @add-battle="(id, nB) => (newPlayerBattles = nB)" />
-        <!--Rank
-          :rank="newPLayerRank"
-          v-if="player.rank"
-          :player-id="player.id"
-          @change-rank="updateRank"
-        />
-        <Strength :strength="newPlayerStrength" /-->
+        <Rank :rank="newPlayerRank" @change-rank="(id, nR) => (newPlayerRank = nR)" />
+        <NewStrength :strength="newPlayerStrength" @change-strength="(id, nS) => (newPlayerStrength = nS)" />
+        <button class="px-2 py-1 ml-auto text-sm text-white bg-green-600 rounded" @click="saveNewPlayer">Speichern</button>
       </div>
     </div>
     <div class="relative p-4 pr-8 overflow-hidden bg-gray-200 rounded-lg shadow-lg" v-for="player in searchResultList" :key="player.id">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between gap-2">
         <h1 class="mr-auto">{{ player.name }}</h1>
         <Battles v-if="player.battles" :battles="player.battles" :player-id="player.id" @add-battle="updateBattles" />
         <Rank :rank="player.rank" v-if="player.rank" :player-id="player.id" @change-rank="updateRank" />
@@ -25,12 +21,12 @@
 </template>
 
 <script setup>
-import { useFindPlayer } from './composables/findPlayer'
+import { useFindPlayer } from "./composables/findPlayer";
 const client = useSupabaseClient();
 const searchPlayer = ref("");
 const newPlayerBattles = ref(1);
-const newPlayerRank = ref(10);
-const newPlayerStrength = ref(null);
+const newPlayerRank = ref(0);
+const newPlayerStrength = ref(0);
 
 const { data: players } = await useAsyncData("players", async () => {
   const { data } = await client.from("players").select("id, name, tag, rank, notes, battles, created_at").order("id", { ascending: true });
@@ -38,14 +34,20 @@ const { data: players } = await useAsyncData("players", async () => {
   return data;
 });
 
+async function saveNewPlayer() {
+  console.log(`Name: ${searchPlayer.value} Battles: ${newPlayerBattles.value} Rank: ${newPlayerRank.value} Strength: ${newPlayerStrength.value}`);
+  const { data, error } = await client.from("players").insert({ name: searchPlayer.value, tag: newPlayerRank.value, rank: newPlayerRank.value, battles: newPlayerBattles.value });
+  console.log(data)
+  console.log(error)
+}
+
 async function updateBattles(playerId, battleCount) {
   const { data, error } = await client.from("players").update({ battles: battleCount }).match({ id: playerId });
 
   // if update success:
   if (data) {
-    
     const playerArrIndex = useFindPlayer(players.value, playerId);
-    
+
     // Change player Array
     players.value[playerArrIndex].battles = data[0].battles;
   } else console.log(error);
@@ -56,7 +58,6 @@ async function updateRank(playerId, newRank) {
 
   // if update success:
   if (data) {
-  
     const playerArrIndex = useFindPlayer(players.value, playerId);
     // Change player Array
     players.value[playerArrIndex].rank = data[0].rank;
@@ -68,9 +69,8 @@ async function updateStrength(playerId, newTag) {
 
   // if update success:
   if (data) {
- 
     const playerArrIndex = useFindPlayer(players.value, playerId);
-    
+
     // Change player Array
     players.value[playerArrIndex].tag = data[0].tag;
   } else console.log(error);
