@@ -16,20 +16,20 @@ const props = defineProps(["strength", "playerId"]);
 
 const playerStrengthColor = computed(() => {
   if (props.strength === 1) {
-    return "bg-emerald-900";
+    return "bg-green-600";
   }
   if (props.strength === 2) {
-    return "bg-sky-700";
+    return "bg-sky-600";
   }
 
   if (props.strength === 3) {
-    return "bg-violet-800";
+    return "bg-fuchsia-700";
   }
 
   if (props.strength === 4) {
-    return "bg-red-900";
+    return "bg-red-500";
   }
 
-  return "bg-gray-400";
+  return "bg-gray-300";
 });
 </script>
