@@ -25,6 +25,7 @@
 </template>
 
 <script setup>
+import { useFindPlayer } from './composables/findPlayer'
 const client = useSupabaseClient();
 const searchPlayer = ref("");
 const newPlayerBattles = ref(1);
@@ -42,8 +43,9 @@ async function updateBattles(playerId, battleCount) {
 
   // if update success:
   if (data) {
-    //console.log(data[0].battles)
-    const playerArrIndex = players.value.findIndex((index) => index.id == playerId);
+    
+    const playerArrIndex = useFindPlayer(players.value, playerId);
+    
     // Change player Array
     players.value[playerArrIndex].battles = data[0].battles;
   } else console.log(error);
@@ -54,9 +56,8 @@ async function updateRank(playerId, newRank) {
 
   // if update success:
   if (data) {
-    //console.log(data[0].battles)
-    // Todo: Make composable out of this
-    const playerArrIndex = players.value.findIndex((index) => index.id == playerId);
+  
+    const playerArrIndex = useFindPlayer(players.value, playerId);
     // Change player Array
     players.value[playerArrIndex].rank = data[0].rank;
   } else console.log(error);
@@ -67,9 +68,9 @@ async function updateStrength(playerId, newTag) {
 
   // if update success:
   if (data) {
-    //console.log(data[0].battles)
-    // Todo: Make composable out of this
-    const playerArrIndex = players.value.findIndex((index) => index.id == playerId);
+ 
+    const playerArrIndex = useFindPlayer(players.value, playerId);
+    
     // Change player Array
     players.value[playerArrIndex].tag = data[0].tag;
   } else console.log(error);
