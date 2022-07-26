@@ -18,7 +18,7 @@
         <h1 class="mr-auto">{{ player.name }}</h1>
         <Battles v-if="player.battles" :battles="player.battles" :player-id="player.id" @add-battle="updateBattles" />
         <Rank :rank="player.rank" v-if="player.rank" :player-id="player.id" @change-rank="updateRank" />
-        <Strength :strength="player.tag" />
+        <Strength :strength="player.tag" :player-id="player.id" @change-strength="updateStrength" />
       </div>
     </div>
   </div>
@@ -62,6 +62,18 @@ async function updateRank(playerId, newRank) {
   } else console.log(error);
 }
 
+async function updateStrength(playerId, newTag) {
+  const { data, error } = await client.from("players").update({ tag: newTag }).match({ id: playerId });
+
+  // if update success:
+  if (data) {
+    //console.log(data[0].battles)
+    // Todo: Make composable out of this
+    const playerArrIndex = players.value.findIndex((index) => index.id == playerId);
+    // Change player Array
+    players.value[playerArrIndex].tag = data[0].tag;
+  } else console.log(error);
+}
 const searchResultList = computed(() => {
   let searchString = searchPlayer.value.toLowerCase();
 

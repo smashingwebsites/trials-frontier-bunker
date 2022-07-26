@@ -12,7 +12,7 @@
   </select>
 </template>
 <script setup>
-const props = defineProps(["strength"]);
+const props = defineProps(["strength", "playerId"]);
 
 const playerStrengthColor = computed(() => {
   if (props.strength === 1) {
